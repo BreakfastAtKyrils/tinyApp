@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/BreakfastAtKyrils/tinyApp/issues"
   },
-  "homepage": "https://github.com/BreakfastAtKyrils/tinyApp#readme"
+  "homepage": "https://github.com/BreakfastAtKyrils/tinyApp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
