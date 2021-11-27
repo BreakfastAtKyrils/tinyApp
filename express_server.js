@@ -53,13 +53,6 @@ app.get("/urls/:shortURL", (req, res) => {
 //this function is called when a user navigates to /u/[any]
 //it redirects to the actual website by using the longURL stored in the urlDatabse
 app.get("/u/:shortURL", (req, res) => {
-  // console.log('the req is:    ' + req)
-  // const longURL = urlDatabase.shortURL;
-  // console.log(longURL)
-  // const shortURL = req.params.shortURL;
-  // const longURL = urlDatabase.shortURL;
-  //const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase.shortURL};
-
   const longURL = urlDatabase[req.params.shortURL]
   res.redirect(longURL);
 });
@@ -76,6 +69,13 @@ app.post("/urls", (req, res) => {
 
   res.redirect(`/urls/${shortURL}`);
 });
+
+app.post('/urls/:shortURL/delete', (req, res) => {
+  delete urlDatabase[req.params.shortURL]
+  console.log(urlDatabase)
+
+  res.redirect('/urls');
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
