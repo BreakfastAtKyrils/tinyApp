@@ -46,7 +46,13 @@ app.get("/urls", (req, res) => {
 // key: longURL: value: urlDatabase.shortURL
 //and passes that object into the res.render function
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase.shortURL /* What goes here? */ };
+  const shortURL = req.params.shortURL
+  const longURL = req.body.longURL
+
+  console.log('longurl is: '+ urlDatabase[shortURL])
+
+  const templateVars = { shortURL: shortURL , longURL: longURL /* What goes here? */ };
+  
   res.render("urls_show", templateVars);
 });
 
