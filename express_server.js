@@ -1,10 +1,12 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser')
 
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 8080; 
 
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser())
 app.set("view engine", "ejs");
 
 function generateRandomString() {
@@ -27,18 +29,29 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = { 
+    username: req.cookies["username"],
+  };
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { 
+    urls: urlDatabase,
+    username: req.cookies["username"],
+  };
+
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL
   const longURL = urlDatabase[shortURL]
-  const templateVars = { shortURL: shortURL , longURL: longURL  };
+  const templateVars = { 
+    shortURL: shortURL ,
+    longURL: longURL, 
+    username: req.cookies["username"],   
+  };
   
   res.render("urls_show", templateVars);
 });
@@ -48,11 +61,6 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-//this functions is called whenever a user navigates to urls/[any]
-//it takes the string after the / and creates an object with
-// key: shortURL value: shortURL
-// key: longURL: value: urlDatabase.shortURL
-//and passes that object into the res.render function
 
 app.post( '/urls/:id', (req, res) => {
   const shortURL = req.params.id
@@ -63,13 +71,17 @@ app.post( '/urls/:id', (req, res) => {
   res.redirect(`/urls/${shortURL}`)
 })
 
+app.post("/login", (req, res) => {
+  res.cookie('username', req.body.username)
+  res.redirect("/urls")
+})
+
+app.post("/logout", (req, res) => {
+  res.clearCookie('username')
+  res.redirect("/urls")
+})
 
 
-//this function is called when a user navigates to /u/[any]
-//it redirects to the actual website by using the longURL stored in the urlDatabse
-
-
-//
 app.post("/urls", (req, res) => {
   //console.log(req.body);  // Log the POST request body to the console
   let shortURL = generateRandomString();
@@ -93,5 +105,5 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`TinyApp listening on port ${PORT}!`);
 });
